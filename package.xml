@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>mimic_grasping_ros_plugin_generator</name>
+  <version>0.0.0</version>
+  <description>
+    Ros package to build ROS depend plugins to mimic_grasping_api.
+  </description>
+  <maintainer email="joao.p.souza@inesctec.pt">João Pedro Carvalho de Souza</maintainer>
+  <license>CC BY-NC-ND 4.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>object_recognition_skill_server</build_depend>
+  <build_depend>photoneo_skill_msgs</build_depend>
+  <build_depend>point_cloud_io</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+
+  <build_export_depend>object_recognition_skill_server</build_export_depend>
+  <build_export_depend>photoneo_skill_msgs</build_export_depend>
+  <build_export_depend>tf</build_export_depend>
+  <build_export_depend>geometry_msgs</build_export_depend>
+
+  <exec_depend>object_recognition_skill_server</exec_depend>
+  <exec_depend>mimic_grasping_ros_interface</exec_depend>
+  <exec_depend>photoneo_skill_msgs</exec_depend>
+  <exec_depend>tf</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+
+</package>

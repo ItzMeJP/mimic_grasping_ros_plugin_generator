@@ -1,0 +1,11 @@
+#ignore specific subfolders
+/cmake-build-debug
+/cmake-build-release
+/.idea
+
+# ignore all logs
+*.log
+
+#ignore subdir .git folders
+/libs/SimpleSerialInterface
+/build

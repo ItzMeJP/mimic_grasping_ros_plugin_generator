@@ -1,0 +1,12 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=@CMAKE_INSTALL_PREFIX@
+libdir=${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: @PHOCI_CAM_OBJ_LOCALIZATION_ROS_PLUGIN@
+Description: @A plugin to communicate with object recognition pipeline and phoxi cameras@
+Version: @16_07_2021@
+
+Requires:
+Libs: -L${libdir} -lphoxi_cam_obj_localization_ros
+Cflags: -I${includedir}
