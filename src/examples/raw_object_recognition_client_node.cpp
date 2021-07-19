@@ -30,10 +30,11 @@ int main(int argc, char **argv) {
     }
 
     Pose p;
-
+    int it = 1;
     while (ros::ok()) {
+        ROS_INFO_STREAM("#" << it << " localization recognition iteration...");
         o.spin(250);
-        o.requestData(p);
+        if(o.requestData(p)){
         ROS_INFO_STREAM("\n Child frame name: " << p.getName() << "\n Parent frame name: " << p.getParentName()
                                                 << "\n Position [x,y,z]: [" <<
                                                 p.getPosition().x() << ", " << p.getPosition().y() << ", "
@@ -42,7 +43,11 @@ int main(int argc, char **argv) {
                                                 << p.getQuaternionOrientation().y() << ", "
                                                 << p.getQuaternionOrientation().z() << ", "
                                                 << p.getQuaternionOrientation().w() << "]");
-
+        }
+        else{
+            ROS_ERROR_STREAM("ERROR in localization estimation");
+        }
+        it++;
     }
 
     o.spin(250);
