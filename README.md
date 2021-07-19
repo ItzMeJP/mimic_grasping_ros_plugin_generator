@@ -20,8 +20,9 @@ Ros package to build ROS depend plugins to [mimic_grasping_api](https://gitlab.i
 5. [Dynamic Robot Localization](https://github.com/carlosmccosta/dynamic_robot_localization)
 6. [Object Recognition](https://github.com/carlosmccosta/object_recognition)
 7. [Mimic Grasping API](https://gitlab.inesctec.pt/CRIIS/mimicgrasping/mimic_grasping_api)
-8. [Plugin System Management](https://gitlab.inesctec.pt/CRIIS/mimicgrasping/plugin_system_management)
-9. [Eigen3](https://eigen.tuxfamily.org/dox/)
+8. [Mimic Grasping ROS Interface Package](https://gitlab.inesctec.pt/CRIIS/mimicgrasping/mimic_grasping_ros_interface_package)
+9. [Plugin System Management](https://gitlab.inesctec.pt/CRIIS/mimicgrasping/plugin_system_management)
+10. [Eigen3](https://eigen.tuxfamily.org/dox/)
 
 ### <a name="Installation"></a>3. Installation
 
