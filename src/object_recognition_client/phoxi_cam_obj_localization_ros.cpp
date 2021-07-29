@@ -57,8 +57,6 @@ bool PhoxiCamObjLocalizationROS::loadAppConfiguration() {
     recognition_action_name_ = config_data_["recognition_server"]["action_name"].asString();
     camera_action_name_ = config_data_["camera_server"]["action_name"].asString();
 
-    recognition_result_topic_name_ = config_data_["recognition_server"]["result_topic_name"].asString();
-
     if (plugin_exec_path_.empty()) {
         output_string_ = plugin_name + " exec is not defined.";
         status_ = FEEDBACK::ERROR;
@@ -144,7 +142,6 @@ bool PhoxiCamObjLocalizationROS::initRosNode() {
     node_handle_.reset(new ros::NodeHandle());
     private_node_handle_.reset(new ros::NodeHandle("~"));
     spinner_.reset(new ros::AsyncSpinner(0));
-    sub_ = node_handle_->subscribe(recognition_result_topic_name_, 1, &PhoxiCamObjLocalizationROS::publisherResultCallback, this);
     spinner_->start();
 
     return true;
@@ -177,14 +174,6 @@ bool PhoxiCamObjLocalizationROS::requestData(Pose &_result) {
         status_ = FEEDBACK::ERROR;
         return false;
     }
-
-    if (!sub_) {
-        output_string_ = "Subscription to topic " + recognition_result_topic_name_ + " failed.";
-        ROS_ERROR_STREAM("Subscription to topic " + recognition_result_topic_name_ + " failed.");
-        status_ = FEEDBACK::ERROR;
-        return false;
-    }
-    ROS_WARN_STREAM("Subscription to " << recognition_result_topic_name_ << " success.");
 
     photoneo_skill_msgs::PhotoneoSkillGoal camera_goal;
     camera_goal.start = true;
@@ -223,39 +212,17 @@ bool PhoxiCamObjLocalizationROS::requestData(Pose &_result) {
         return false;
     }
 
-    /*
-    Eigen::Translation3d t(action_server_->getResult().get()->pose.position.x,
-                           action_server_->getResult().get()->pose.position.y,
-                           action_server_->getResult().get()->pose.position.z);
+    Eigen::Translation3d t(recognition_action_server_->getResult().get()->pose.pose.position.x,
+                           recognition_action_server_->getResult().get()->pose.pose.position.y,
+                           recognition_action_server_->getResult().get()->pose.pose.position.z);
 
-    Eigen::Quaterniond q(action_server_->getResult().get()->pose.orientation.w,
-                         action_server_->getResult().get()->pose.orientation.x,
-                         action_server_->getResult().get()->pose.orientation.y,
-                         action_server_->getResult().get()->pose.orientation.z);
-
-     */
-
-    //std::string s;
-    //private_node_handle_->param<std::string>("/"+ros_namespace_+"/object_recognition_skill_server/frame_ids/base_link_frame_id", s, "");
-
-    static ros::Time prev(0);
-    while (current_received_msg_.header.stamp == prev && ros::ok()) {
-        ROS_WARN_STREAM("Current msg does not changed yet. Current timestamp:" << current_received_msg_.header.stamp);
-        spin(250);
-    }
-    prev = current_received_msg_.header.stamp;
-
-    Eigen::Translation3d t(current_received_msg_.pose.position.x,
-                           current_received_msg_.pose.position.y,
-                           current_received_msg_.pose.position.z);
-
-    Eigen::Quaterniond q(current_received_msg_.pose.orientation.w,
-                         current_received_msg_.pose.orientation.x,
-                         current_received_msg_.pose.orientation.y,
-                         current_received_msg_.pose.orientation.z);
+    Eigen::Quaterniond q(recognition_action_server_->getResult().get()->pose.pose.orientation.w,
+                         recognition_action_server_->getResult().get()->pose.pose.orientation.x,
+                         recognition_action_server_->getResult().get()->pose.pose.orientation.y,
+                         recognition_action_server_->getResult().get()->pose.pose.orientation.z);
 
     _result.setName(getNameFromPath(target_name_)+"_frame_id");
-    _result.setParentName(current_received_msg_.header.frame_id);
+    _result.setParentName(recognition_action_server_->getResult().get()->pose.header.frame_id);
     _result.setPosition(t);
     _result.setQuaternionOrientation(q);
 

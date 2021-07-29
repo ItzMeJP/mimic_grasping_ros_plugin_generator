@@ -60,7 +60,6 @@ protected:
 
     std::shared_ptr<ros::NodeHandle> node_handle_, private_node_handle_;
 
-    ros::Subscriber sub_;
     std::shared_ptr<ros::AsyncSpinner> spinner_;
     geometry_msgs::PoseStamped current_received_msg_;
     std::shared_ptr<actionlib::SimpleActionClient<object_recognition_skill_msgs::ObjectRecognitionSkillAction>> action_server_;
@@ -83,8 +82,7 @@ private:
             wait_for_result_timeout_in_seconds_;
 
     std::string action_name_,
-            ros_namespace_,
-            subs_topic_name_;
+            ros_namespace_;
 };
 
 /** ################## Factory Function - Plugin EntryPoint  ##################  **/

@@ -61,7 +61,6 @@ protected:
 
     std::shared_ptr<ros::NodeHandle> node_handle_, private_node_handle_;
 
-    ros::Subscriber sub_;
     std::shared_ptr<ros::AsyncSpinner> spinner_;
     geometry_msgs::PoseStamped current_received_msg_;
     std::shared_ptr<actionlib::SimpleActionClient<object_recognition_skill_msgs::ObjectRecognitionSkillAction>> recognition_action_server_;
@@ -88,7 +87,6 @@ private:
 
     std::string ros_recognition_namespace_,
             recognition_action_name_,
-            recognition_result_topic_name_,
             ros_camera_namespace_,
             camera_action_name_;
 
