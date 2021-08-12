@@ -18,7 +18,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <object_recognition_skill_msgs/ObjectRecognitionSkillAction.h>
 
-#include <mimic_grasping_server/localization_base.h>
+#include <mimic_grasping_api/localization_base.h>
 
 class ObjLocalizationROS : public LocalizationBase {
 public:

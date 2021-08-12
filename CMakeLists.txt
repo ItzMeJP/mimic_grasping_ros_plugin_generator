@@ -25,8 +25,8 @@ find_package(Eigen3 REQUIRED) # To matrix operations
 find_package(Boost REQUIRED COMPONENTS system thread timer)
 
 ## Add other libs that does not have an find_package
-add_library(ht_manipulation SHARED IMPORTED GLOBAL)
-set_property(TARGET ht_manipulation PROPERTY IMPORTED_LOCATION "/usr/local/lib/ht_manipulation/libpose.so")
+add_library(transform_manipulation SHARED IMPORTED GLOBAL)
+set_property(TARGET transform_manipulation PROPERTY IMPORTED_LOCATION "/usr/local/lib/transform_manipulation/libtransform_manipulation.so")
 add_library(plugin_system_management SHARED IMPORTED GLOBAL)
 set_property(TARGET plugin_system_management PROPERTY IMPORTED_LOCATION "/usr/local/lib/plugin_system_management/libplugin_system_management.so")
 
@@ -48,7 +48,7 @@ add_library(object_localization_ros SHARED
         )
 
 target_link_libraries(object_localization_ros
-        ht_manipulation
+        transform_manipulation
         plugin_system_management
         ${CMAKE_THREAD_LIBS_INIT}
         ${catkin_LIBRARIES}
@@ -63,7 +63,7 @@ add_library(phoxi_cam_object_localization_ros SHARED
         )
 
 target_link_libraries(phoxi_cam_object_localization_ros
-        ht_manipulation
+        transform_manipulation
         plugin_system_management
         ${CMAKE_THREAD_LIBS_INIT}
         ${catkin_LIBRARIES}
@@ -101,7 +101,7 @@ target_link_libraries(
         ${catkin_LIBRARIES}
         #debug_plugin
         #plugin_system_management
-        #ht_manipulation
+        #transform_manipulation
         #${CMAKE_THREAD_LIBS_INIT}
         #Eigen3::Eigen
         #Boost::thread
@@ -117,7 +117,7 @@ target_link_libraries(
         ${catkin_LIBRARIES}
         #debug_plugin
         #plugin_system_management
-        #ht_manipulation
+        #transform_manipulation
         #${CMAKE_THREAD_LIBS_INIT}
         #Eigen3::Eigen
         #Boost::thread

@@ -19,7 +19,7 @@
 #include <object_recognition_skill_msgs/ObjectRecognitionSkillAction.h>
 #include <photoneo_skill_msgs/PhotoneoSkillAction.h>
 
-#include <mimic_grasping_server/localization_base.h>
+#include <mimic_grasping_api/localization_base.h>
 
 class PhoxiCamObjLocalizationROS : public LocalizationBase {
 public:
