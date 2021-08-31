@@ -130,15 +130,17 @@ bool PhoxiCamObjLocalizationROS::runApp() {
 
 bool PhoxiCamObjLocalizationROS::initRosNode() {
 
-    if (!ros::master::check()) {
-        ROS_WARN_STREAM("No roscore found, calling roscore automatically...");
-        popen("roscore", "r");
-    }
 
     std::string node_name = ros_recognition_namespace_ + "_mimic_grasping_plugin_node";
     int argc;
     char **argv;
     ros::init(argc, argv, node_name);
+
+    if (!ros::master::check()) {
+        std::cerr<<"No roscore found, calling roscore automatically..."<<std::endl;
+        popen("roscore", "r");
+        sleep(1);
+    }
     node_handle_.reset(new ros::NodeHandle());
     private_node_handle_.reset(new ros::NodeHandle("~"));
     spinner_.reset(new ros::AsyncSpinner(0));
