@@ -143,6 +143,7 @@ bool ObjLocalizationROS::stopApp() {
         obj_localization_thread_reader_->join();
         spinner_->stop();
         //pclose(pipe_to_obj_localization_.get());
+        DEBUG_MSG("Killing Object Localization Server.");
         popen(plugin_terminator_path_.c_str(), "r");
         first_obj_localization_communication_ = true;
         return true;
@@ -169,13 +170,13 @@ bool ObjLocalizationROS::requestData(Pose &_result) {
     action_server_->sendGoal(goal);
     bool finished_before_timeout = action_server_->waitForResult(ros::Duration(wait_for_result_timeout_in_seconds_));
 
-    if (finished_before_timeout) {
+    if (finished_before_timeout && action_server_->getState() == actionlib::SimpleClientGoalState::SUCCEEDED) {
         output_string_ = "Request data with success. " + action_server_->getState().toString();
-        std::cout << output_string_ << std::endl;
+        DEBUG_MSG( output_string_ );
         status_ = FEEDBACK::FINISHED;
     } else {
         output_string_ = "Fail to request data " + action_server_->getState().toString();
-        std::cout << output_string_ << std::endl;
+        DEBUG_MSG( output_string_ );
         status_ = FEEDBACK::ERROR;
         return false;
     }
@@ -221,7 +222,7 @@ int ObjLocalizationROS::getStatus() {
 }
 
 std::string ObjLocalizationROS::getOutputString() {
-    return output_string_;
+    return MSG_PREFIX + output_string_;
 }
 
 void ObjLocalizationROS::publisherResultCallback(const geometry_msgs::PoseStamped::ConstPtr &_msg) {
@@ -237,7 +238,7 @@ void ObjLocalizationROS::execCallback(int _file_descriptor) {
             //boost::this_thread::sleep(boost::posix_time::milliseconds(500)); //interruption with sleep
         }
         catch (boost::thread_interrupted &) {
-            std::cout << plugin_name + " pipe thread is stopped." << std::endl;
+            DEBUG_MSG( plugin_name + " pipe thread is stopped." );
             return;
         }
     }

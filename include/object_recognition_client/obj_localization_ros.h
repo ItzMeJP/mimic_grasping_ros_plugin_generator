@@ -1,6 +1,13 @@
 //
 // Created by joaopedro on 07/07/21.
 //
+#define MSG_PREFIX "<ObjLocalizationROSPlugin> "
+
+#ifndef NDEBUG
+#define DEBUG_MSG(str) do { std::cout << "\033[;33m" <<"[WARN] "<< MSG_PREFIX << str << "\033[0m"<< std::endl; } while( false )
+#else
+#define DEBUG_MSG(str) do { } while ( false )
+#endif
 
 #ifndef MIMIC_GRASPING_SERVER_OBJ_LOCALIZATION_ROS_H
 #define MIMIC_GRASPING_SERVER_OBJ_LOCALIZATION_ROS_H
@@ -96,13 +103,14 @@ auto GetPluginFactory() -> IPluginFactory * {
 
     static PluginFactory pinfo = [] {
         /** Properly set the plugin name and version **/
-        auto p = PluginFactory(plugin_name.c_str(), "16_07_2021");
+        auto p = PluginFactory(plugin_name.c_str(), "01_09_2021");
         /** Register all classes defined inside the plugin **/
         p.registerClass<ObjLocalizationROS>("ObjLocalizationROS");
         return p;
     }();
     return &pinfo;
 }
+
 
 struct _DLLInit {
     _DLLInit() {
@@ -113,5 +121,6 @@ struct _DLLInit {
         std::cout << " [TRACE] Shared library " << plugin_name << " unloaded OK.\n";
     }
 } dll_init;
+
 
 #endif //MIMIC_GRASPING_SERVER_OBJ_LOCALIZATION_ROS_H

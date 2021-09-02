@@ -2,9 +2,29 @@
 // Created by joaopedro on 12/07/21.
 //
 
-#include <object_recognition_client/obj_localization_ros.h>
+#include <plugin_system_management/plugin_system_management.h>
+#include <mimic_grasping_api/localization_base.h>
+#include <memory>
 
 int main(int argc, char **argv) {
+
+    PluginSystemManagement ph_;
+
+    std::string path = (std::filesystem::current_path().parent_path().string() + "/plugins/");
+    if(!ph_.loadDynamicPlugins(path,true)){
+        std::cout << ph_.getPluginManagementOutputMsg() << std::endl;
+        return false;
+    }
+
+    std::cout<< "Number of plugins loaded: " << ph_.GetNumberOfPluginsLoaded() << std::endl;
+
+    std::shared_ptr<LocalizationBase> instance = ph_.CreateInstanceAs<LocalizationBase>(ph_.GetPluginFactoryInfo(0)->Name(),ph_.GetPluginFactoryInfo(0)->GetClassName(0));
+    assert(instance != nullptr);
+
+
+
+
+
 
     char const* env_root_folder_path;
 
@@ -43,6 +63,7 @@ int main(int argc, char **argv) {
                                                 << p.getQuaternionOrientation().y() << ", "
                                                 << p.getQuaternionOrientation().z() << ", "
                                                 << p.getQuaternionOrientation().w() << "]");
+        break;
         }
         else{
             ROS_ERROR_STREAM("ERROR in localization estimation");
@@ -52,5 +73,7 @@ int main(int argc, char **argv) {
 
     o.spin(250);
     o.stopApp();
+
+    std::cout << "Finished..." << std::endl;
     return 0;
 }

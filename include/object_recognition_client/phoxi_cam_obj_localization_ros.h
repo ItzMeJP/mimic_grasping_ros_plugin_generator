@@ -2,6 +2,14 @@
 // Created by joaopedro on 16/07/21.
 //
 
+#define MSG_PREFIX "<PhoxiCamObjLocalizationROSPlugin> "
+
+#ifndef NDEBUG
+#define DEBUG_MSG(str) do { std::cout << "\033[;33m" <<"[WARN] "<< MSG_PREFIX << str << "\033[0m"<< std::endl; } while( false )
+#else
+#define DEBUG_MSG(str) do { } while ( false )
+#endif
+
 #ifndef MIMIC_GRASPING_ROS_PLUGIN_GENERATOR_PHOXI_CAM_OBJ_LOCALIZATION_ROS_H
 #define MIMIC_GRASPING_ROS_PLUGIN_GENERATOR_PHOXI_CAM_OBJ_LOCALIZATION_ROS_H
 
@@ -103,7 +111,7 @@ auto GetPluginFactory() -> IPluginFactory * {
 
     static PluginFactory pinfo = [] {
         /** Properly set the plugin name and version **/
-        auto p = PluginFactory(plugin_name.c_str(), "16_07_2021");
+        auto p = PluginFactory(plugin_name.c_str(), "01_09_2021");
         /** Register all classes defined inside the plugin **/
         p.registerClass<PhoxiCamObjLocalizationROS>("PhoxiCamObjLocalizationROS");
         return p;

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(mimic_grasping_ros_plugin_generator
-        VERSION 16.07.2021
+        VERSION 01.09.2021
         DESCRIPTION
         "")
 
@@ -75,10 +75,12 @@ target_link_libraries(phoxi_cam_object_localization_ros
 
 set_target_properties(object_localization_ros PROPERTIES
         PUBLIC_HEADER "include/object_recognition_client/obj_localization_ros.h"
+        LIBRARY_OUTPUT_DIRECTORY ${PLUGINS_DIR_FOLDER}
         )
 
 set_target_properties(phoxi_cam_object_localization_ros PROPERTIES
         PUBLIC_HEADER "include/object_recognition_client/phoxi_cam_obj_localization_ros.h"
+        LIBRARY_OUTPUT_DIRECTORY ${PLUGINS_DIR_FOLDER}
         )
 
 configure_file(install_configurations/obj_localization_ros.pc.in obj_localization_ros.pc @ONLY)
@@ -92,20 +94,19 @@ install(TARGETS object_localization_ros phoxi_cam_object_localization_ros
 install(FILES ${CMAKE_BINARY_DIR}/obj_localization_ros.pc ${CMAKE_BINARY_DIR}/phoxi_obj_localization_ros.pc
         DESTINATION ${CMAKE_BINARY_DIR}/pkgconfig)
 
-add_executable(raw_test
+#[[add_executable(raw_test
         src/examples/raw_object_recognition_client_node.cpp)
 
 target_link_libraries(
         raw_test
-        object_localization_ros
         ${catkin_LIBRARIES}
-        #debug_plugin
-        #plugin_system_management
-        #transform_manipulation
-        #${CMAKE_THREAD_LIBS_INIT}
-        #Eigen3::Eigen
-        #Boost::thread
-        #Boost::timer
+        plugin_system_management
+        transform_manipulation
+        Eigen3::Eigen
+        Boost::thread
+        Boost::timer
+        jsoncpp
+
 )
 
 add_executable(phoxi_cam_test
@@ -113,13 +114,12 @@ add_executable(phoxi_cam_test
 
 target_link_libraries(
         phoxi_cam_test
-        phoxi_cam_object_localization_ros
         ${catkin_LIBRARIES}
-        #debug_plugin
-        #plugin_system_management
-        #transform_manipulation
-        #${CMAKE_THREAD_LIBS_INIT}
-        #Eigen3::Eigen
-        #Boost::thread
-        #Boost::timer
-)
+        plugin_system_management
+        transform_manipulation
+        Eigen3::Eigen
+        Boost::thread
+        Boost::timer
+        jsoncpp
+
+)]]

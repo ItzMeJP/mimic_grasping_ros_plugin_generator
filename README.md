@@ -49,10 +49,11 @@ After the installation, the generated plugins will be placed at ```$ROS_WS/devel
 
 To run a plugin, the loader package need to be in accordance with [Mimic Grasping API](https://gitlab.inesctec.pt/CRIIS/mimicgrasping/mimic_grasping_api) which  plugin system is based on [Plugin System Management](https://gitlab.inesctec.pt/CRIIS/mimicgrasping/plugin_system_management) API.
 
-Once the shared plugin lib is loaded in run-time, it is necessary to call methods to load configurations (.JSON) and run the external executables. 
+Once the shared plugin lib is loaded in run-time, it is necessary to call methods to load configurations (.JSON) and run the external executables.
 For examples, check [here](./src/examples). The initialization scripts and configurations JSON files, used in these cases are located at [Mimic Grasping API](https://gitlab.inesctec.pt/CRIIS/mimicgrasping/mimic_grasping_api). It uses the environment variable $MIMIC_GRASPING_SERVER_ROOT as reference.
 
-### Testers 
+### Testers
+**NOTE: Since the plugin management update the following tester node need to be corrected. **
 Each plugin can be tested by running each plugin node tester. Bellow is presented the steps to each one:
 
 ##### **Raw tester**
@@ -71,7 +72,9 @@ Tester used to debug **libphoxi_cam_object_localization_ros**. To run, just:
 rosrun mimic_grasping_ros_plugin_generator phoxi_cam_test
 ```
 
+## TODO
 
+The tester nodes need to be correct to accept the plugin management update. 
 
 
 -----------------------------------------------------------------------------------------------------------------

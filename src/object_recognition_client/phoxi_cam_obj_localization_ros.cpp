@@ -157,6 +157,7 @@ bool PhoxiCamObjLocalizationROS::stopApp() {
         obj_localization_thread_reader_->join();
         spinner_->stop();
         //pclose(pipe_to_obj_localization_.get());
+        DEBUG_MSG("Killing Phoxi Object Localization Server.");
         popen(plugin_terminator_path_.c_str(), "r");
         first_obj_localization_communication_ = true;
         return true;
@@ -183,13 +184,13 @@ bool PhoxiCamObjLocalizationROS::requestData(Pose &_result) {
 
     bool finished_before_timeout = camera_action_server_->waitForResult(ros::Duration(wait_for_camera_result_server_timeout_in_seconds));
 
-    if (finished_before_timeout) {
+    if (finished_before_timeout && camera_action_server_->getState() == actionlib::SimpleClientGoalState::SUCCEEDED ) {
         output_string_ = "Request camera image with success. " + camera_action_server_->getState().toString();
-        std::cout << output_string_ << std::endl;
+        DEBUG_MSG(output_string_ );
         status_ = FEEDBACK::PROCESSING;
     } else {
         output_string_ = "Fail to request camera image " + camera_action_server_->getState().toString();
-        std::cout << output_string_ << std::endl;
+        DEBUG_MSG( output_string_ );
         status_ = FEEDBACK::ERROR;
         return false;
     }
@@ -203,13 +204,13 @@ bool PhoxiCamObjLocalizationROS::requestData(Pose &_result) {
     recognition_action_server_->sendGoal(goal);
     finished_before_timeout = recognition_action_server_->waitForResult(ros::Duration(wait_for_recognition_result_timeout_in_seconds_));
 
-    if (finished_before_timeout) {
+    if (finished_before_timeout && recognition_action_server_->getState() == actionlib::SimpleClientGoalState::SUCCEEDED) {
         output_string_ = "Request data with success. " + recognition_action_server_->getState().toString();
-        std::cout << output_string_ << std::endl;
+        DEBUG_MSG( output_string_ );
         status_ = FEEDBACK::FINISHED;
     } else {
         output_string_ = "Fail to request data " + recognition_action_server_->getState().toString();
-        std::cout << output_string_ << std::endl;
+        DEBUG_MSG( output_string_ );
         status_ = FEEDBACK::ERROR;
         return false;
     }
@@ -255,7 +256,7 @@ int PhoxiCamObjLocalizationROS::getStatus() {
 }
 
 std::string PhoxiCamObjLocalizationROS::getOutputString() {
-    return output_string_;
+    return MSG_PREFIX + output_string_;
 }
 
 void PhoxiCamObjLocalizationROS::publisherResultCallback(const geometry_msgs::PoseStamped::ConstPtr &_msg) {
@@ -271,7 +272,7 @@ void PhoxiCamObjLocalizationROS::execCallback(int _file_descriptor) {
             //boost::this_thread::sleep(boost::posix_time::milliseconds(500)); //interruption with sleep
         }
         catch (boost::thread_interrupted &) {
-            std::cout << plugin_name + " pipe thread is stopped." << std::endl;
+            DEBUG_MSG( plugin_name + " pipe thread is stopped." );
             return;
         }
     }
