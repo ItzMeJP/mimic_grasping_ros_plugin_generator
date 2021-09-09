@@ -9,7 +9,7 @@ PhoxiCamObjLocalizationROS::PhoxiCamObjLocalizationROS() {
 }
 
 PhoxiCamObjLocalizationROS::~PhoxiCamObjLocalizationROS() {
-    stopApp();
+    //stopApp();
 }
 
 bool PhoxiCamObjLocalizationROS::setAppConfigPath(std::string _file_with_path) {

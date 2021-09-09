@@ -9,7 +9,7 @@ ObjLocalizationROS::ObjLocalizationROS() {
 }
 
 ObjLocalizationROS::~ObjLocalizationROS() {
-    stopApp();
+    //stopApp();
 }
 
 
