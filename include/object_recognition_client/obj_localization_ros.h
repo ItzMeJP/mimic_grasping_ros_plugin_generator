@@ -90,6 +90,10 @@ private:
 
     std::string action_name_,
             ros_namespace_;
+
+    std::shared_ptr<boost::thread> spin_thread_;
+    void spinCallback();
+    void freeMem();
 };
 
 /** ################## Factory Function - Plugin EntryPoint  ##################  **/

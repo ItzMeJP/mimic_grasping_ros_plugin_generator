@@ -10,6 +10,7 @@ PhoxiCamObjLocalizationROS::PhoxiCamObjLocalizationROS() {
 
 PhoxiCamObjLocalizationROS::~PhoxiCamObjLocalizationROS() {
     //stopApp();
+    freeMem();
 }
 
 bool PhoxiCamObjLocalizationROS::setAppConfigPath(std::string _file_with_path) {
@@ -136,7 +137,7 @@ bool PhoxiCamObjLocalizationROS::initRosNode() {
     char **argv;
     ros::init(argc, argv, node_name);
 
-    if (!ros::master::check()) {
+    while (!ros::master::check()) {
         std::cerr<<"No roscore found, calling roscore automatically..."<<std::endl;
         popen("roscore", "r");
         sleep(1);
@@ -147,6 +148,16 @@ bool PhoxiCamObjLocalizationROS::initRosNode() {
     spinner_->start();
 
     return true;
+}
+
+void PhoxiCamObjLocalizationROS::freeMem(){
+    obj_localization_thread_reader_.reset();
+    spinner_.reset();
+    pipe_to_obj_localization_.reset();
+    node_handle_.reset();
+    private_node_handle_.reset();
+    recognition_action_server_.reset();
+    camera_action_server_.reset();
 }
 
 bool PhoxiCamObjLocalizationROS::stopApp() {
@@ -160,6 +171,7 @@ bool PhoxiCamObjLocalizationROS::stopApp() {
         DEBUG_MSG("Killing Phoxi Object Localization Server.");
         popen(plugin_terminator_path_.c_str(), "r");
         first_obj_localization_communication_ = true;
+        freeMem();
         return true;
     } else {
         output_string_ = "Cannot kill since the object recognition process is not running.";

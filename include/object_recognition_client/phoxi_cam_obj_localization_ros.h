@@ -98,6 +98,8 @@ private:
             ros_camera_namespace_,
             camera_action_name_;
 
+    void freeMem();
+
 };
 
 /** ################## Factory Function - Plugin EntryPoint  ##################  **/

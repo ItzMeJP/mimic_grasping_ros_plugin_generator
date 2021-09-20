@@ -5,11 +5,11 @@
 #include "object_recognition_client/obj_localization_ros.h"
 
 ObjLocalizationROS::ObjLocalizationROS() {
-
 }
 
 ObjLocalizationROS::~ObjLocalizationROS() {
     //stopApp();
+    freeMem();
 }
 
 
@@ -71,6 +71,8 @@ bool ObjLocalizationROS::loadAppConfiguration() {
         return false;
     }
 
+    //spin_thread_.reset(new boost::thread(boost::bind(&ObjLocalizationROS::spinCallback, this)));
+
     return true;
 }
 
@@ -83,14 +85,20 @@ bool ObjLocalizationROS::runApp() {
     pipe_to_obj_localization_.reset(
             popen(plugin_exec_path_.c_str(), "r")); // TODO: find a solution to treat this error!
 
+    //spin_thread_.reset(new boost::thread(boost::bind(&ObjLocalizationROS::spinCallback, this)));
+
+    //sleep(10);
+
     int descriptor = fileno(pipe_to_obj_localization_.get());
     fcntl(descriptor, F_SETFL, O_NONBLOCK);
 
     obj_localization_thread_reader_.reset(
             new boost::thread(boost::bind(&ObjLocalizationROS::execCallback, this, descriptor)));
 
-    action_server_ = std::make_shared<actionlib::SimpleActionClient<object_recognition_skill_msgs::ObjectRecognitionSkillAction>>(
-            action_name_, true);
+    //action_server_ = std::make_shared<actionlib::SimpleActionClient<object_recognition_skill_msgs::ObjectRecognitionSkillAction>>(
+    //        action_name_, true);
+
+    action_server_.reset(new actionlib::SimpleActionClient<object_recognition_skill_msgs::ObjectRecognitionSkillAction>(action_name_, true));
 
     first_obj_localization_communication_ = false;
 
@@ -98,19 +106,27 @@ bool ObjLocalizationROS::runApp() {
 
         status_ = FEEDBACK::INITIALIZING;
         output_string_ = "Waiting for RosAction Server startup...";
-        ROS_WARN_STREAM(output_string_);
+        DEBUG_MSG(output_string_);
+
         bool b = action_server_->waitForServer(ros::Duration(wait_for_server_timeout_in_seconds_, 0));
+
         if (!b) {
-            output_string_ = "The RosAction was not properly initialized";
-            ROS_ERROR_STREAM(output_string_);
+
+            output_string_ = "The RosAction was not properly initialized. Try to increase the wait for server timeout.";
+            DEBUG_MSG(output_string_);
             status_ = FEEDBACK::ERROR;
-            stopApp();
+            //stopApp();
             return false;
+
         }
     } else
-        stopApp();
+        return false;//stopApp();
 
     return true;
+}
+
+void ObjLocalizationROS::spinCallback(){
+        ros::spin();
 }
 
 bool ObjLocalizationROS::initRosNode() {
@@ -121,7 +137,7 @@ bool ObjLocalizationROS::initRosNode() {
     char **argv;
     ros::init(argc, argv, node_name);
 
-    if (!ros::master::check()) {
+    while (!ros::master::check()) {
         std::cerr<<"No roscore found, calling roscore automatically..."<<std::endl;
         popen("roscore", "r");
         sleep(1);
@@ -135,6 +151,16 @@ bool ObjLocalizationROS::initRosNode() {
     return true;
 }
 
+void ObjLocalizationROS::freeMem(){
+    obj_localization_thread_reader_.reset();
+    spinner_.reset();
+    pipe_to_obj_localization_.reset();
+    node_handle_.reset();
+    private_node_handle_.reset();
+    action_server_.reset();
+    spin_thread_.reset();
+}
+
 bool ObjLocalizationROS::stopApp() {
 
     if (!first_obj_localization_communication_) {
@@ -146,11 +172,18 @@ bool ObjLocalizationROS::stopApp() {
         DEBUG_MSG("Killing Object Localization Server.");
         popen(plugin_terminator_path_.c_str(), "r");
         first_obj_localization_communication_ = true;
+
+        //spin_thread_->interrupt();
+        //ros::shutdown();
+        //spin_thread_->join();
+        freeMem();
+
         return true;
     } else {
         output_string_ = "Cannot kill since the object recognition process is not running.";
         return false;
     }
+
 }
 
 

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(mimic_grasping_ros_plugin_generator
-        VERSION 01.09.2021
+        VERSION 20.09.2021
         DESCRIPTION
         "")
 
