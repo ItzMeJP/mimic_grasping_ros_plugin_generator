@@ -113,7 +113,7 @@ auto GetPluginFactory() -> IPluginFactory * {
 
     static PluginFactory pinfo = [] {
         /** Properly set the plugin name and version **/
-        auto p = PluginFactory(plugin_name.c_str(), "01_09_2021");
+        auto p = PluginFactory(plugin_name.c_str(), "24_09_2021");
         /** Register all classes defined inside the plugin **/
         p.registerClass<PhoxiCamObjLocalizationROS>("PhoxiCamObjLocalizationROS");
         return p;

@@ -89,6 +89,15 @@ bool ObjLocalizationROS::runApp() {
 
     //sleep(10);
 
+    if(pipe_to_obj_localization_.get() == NULL){
+        output_string_ = "Error in open the executor file for object recognition plugin. ";
+        output_string_ += strerror(errno);
+        DEBUG_MSG(output_string_);
+        //strerror(errno); //printing errno value
+        return false;
+    }
+
+
     int descriptor = fileno(pipe_to_obj_localization_.get());
     fcntl(descriptor, F_SETFL, O_NONBLOCK);
 
@@ -170,13 +179,13 @@ bool ObjLocalizationROS::stopApp() {
         spinner_->stop();
         //pclose(pipe_to_obj_localization_.get());
         DEBUG_MSG("Killing Object Localization Server.");
-        popen(plugin_terminator_path_.c_str(), "r");
+        //popen(plugin_terminator_path_.c_str(), "r");
         first_obj_localization_communication_ = true;
-
-        //spin_thread_->interrupt();
-        //ros::shutdown();
-        //spin_thread_->join();
         freeMem();
+
+        if(system(plugin_terminator_path_.c_str())==-1){
+            output_string_ = "Error in object recognition terminator.";
+        }
 
         return true;
     } else {

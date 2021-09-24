@@ -88,6 +88,14 @@ bool PhoxiCamObjLocalizationROS::runApp() {
     pipe_to_obj_localization_.reset(
             popen(plugin_exec_path_.c_str(), "r")); // TODO: find a solution to treat this error!
 
+    if(pipe_to_obj_localization_.get() == NULL){
+        output_string_ = "Error in open the executor file for phoxi object recognition plugin. ";
+        output_string_ += strerror(errno);
+        DEBUG_MSG(output_string_);
+        //strerror(errno); //printing errno value
+        return false;
+    }
+
     int descriptor = fileno(pipe_to_obj_localization_.get());
     fcntl(descriptor, F_SETFL, O_NONBLOCK);
 
@@ -169,12 +177,17 @@ bool PhoxiCamObjLocalizationROS::stopApp() {
         spinner_->stop();
         //pclose(pipe_to_obj_localization_.get());
         DEBUG_MSG("Killing Phoxi Object Localization Server.");
-        popen(plugin_terminator_path_.c_str(), "r");
+        //popen(plugin_terminator_path_.c_str(), "r");
         first_obj_localization_communication_ = true;
         freeMem();
+
+        if(system(plugin_terminator_path_.c_str())==-1){
+            output_string_ = "Error in open phoxi object recognition terminator.";
+        }
+
         return true;
     } else {
-        output_string_ = "Cannot kill since the object recognition process is not running.";
+        output_string_ = "Cannot kill since the phoxi object recognition process is not running.";
         return false;
     }
 }
