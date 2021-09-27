@@ -65,7 +65,7 @@ protected:
     std::string current_pipe_output_str_;
 
     std::shared_ptr<boost::thread> obj_localization_thread_reader_;
-    std::shared_ptr<FILE> pipe_to_obj_localization_;
+    FILE* pipe_to_obj_localization_;
 
     std::shared_ptr<ros::NodeHandle> node_handle_, private_node_handle_;
 

@@ -5,7 +5,8 @@ project(mimic_grasping_ros_plugin_generator
         "")
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++17)
+#add_compile_options(-std=c++2a)
 
 include(GNUInstallDirs)
 
@@ -94,7 +95,7 @@ install(TARGETS object_localization_ros phoxi_cam_object_localization_ros
 install(FILES ${CMAKE_BINARY_DIR}/obj_localization_ros.pc ${CMAKE_BINARY_DIR}/phoxi_obj_localization_ros.pc
         DESTINATION ${CMAKE_BINARY_DIR}/pkgconfig)
 
-#[[add_executable(raw_test
+add_executable(raw_test
         src/examples/raw_object_recognition_client_node.cpp)
 
 target_link_libraries(
@@ -109,6 +110,7 @@ target_link_libraries(
 
 )
 
+#[[
 add_executable(phoxi_cam_test
         src/examples/phoxi_cam_object_recognition_client_node.cpp)
 
@@ -122,4 +124,6 @@ target_link_libraries(
         Boost::timer
         jsoncpp
 
-)]]
+
+)
+]]

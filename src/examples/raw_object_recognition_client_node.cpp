@@ -4,13 +4,15 @@
 
 #include <plugin_system_management/plugin_system_management.h>
 #include <mimic_grasping_api/localization_base.h>
+//#include "object_recognition_client/obj_localization_ros.h"
+#include <ros/ros.h>
 #include <memory>
 
 int main(int argc, char **argv) {
 
     PluginSystemManagement ph_;
 
-    std::string path = (std::filesystem::current_path().parent_path().string() + "/plugins/");
+    std::string path = ("/home/joaopedro/ros_ws/ws_grasping/src/mimic_grasping_ros_plugin_generator/plugins");
     if(!ph_.loadDynamicPlugins(path,true)){
         std::cout << ph_.getPluginManagementOutputMsg() << std::endl;
         return false;
@@ -37,15 +39,13 @@ int main(int argc, char **argv) {
 
     std::string root_folder_path_ = std::string(env_root_folder_path);
 
-    ObjLocalizationROS o;
+    instance->setAppExec(root_folder_path_ + "/scripts/obj_localization_ros_init.sh");
+    instance->setAppTermination( root_folder_path_ + "/scripts/obj_localization_ros_close.sh");
+    instance->setAppConfigPath(root_folder_path_ + "/configs/default/plugin_object_localization_ros.json");
+    instance->setTargetName(root_folder_path_ + "/models/single_side_bracket.ply");
 
-    o.setAppExec(root_folder_path_ + "/scripts/obj_localization_ros_init.sh");
-    o.setAppTermination( root_folder_path_ + "/scripts/obj_localization_ros_close.sh");
-    o.setAppConfigPath(root_folder_path_ + "/configs/plugin_object_localization_ros.json");
-    o.setTargetName(root_folder_path_ + "/models/single_side_bracket.ply");
-
-    if (!o.loadAppConfiguration() || !o.runApp()) {
-        std::cout << o.getOutputString() << std::endl;
+    if (!instance->loadAppConfiguration() || !instance->runApp()) {
+        std::cout << instance->getOutputString() << std::endl;
         return false;
     }
 
@@ -53,8 +53,8 @@ int main(int argc, char **argv) {
     int it = 1;
     while (ros::ok()) {
         ROS_INFO_STREAM("#" << it << " localization recognition iteration...");
-        o.spin(250);
-        if(o.requestData(p)){
+        instance->spin(250);
+        if(instance->requestData(p)){
         ROS_INFO_STREAM("\n Child frame name: " << p.getName() << "\n Parent frame name: " << p.getParentName()
                                                 << "\n Position [x,y,z]: [" <<
                                                 p.getPosition().x() << ", " << p.getPosition().y() << ", "
@@ -71,8 +71,8 @@ int main(int argc, char **argv) {
         it++;
     }
 
-    o.spin(250);
-    o.stopApp();
+    instance->spin(250);
+    instance->stopApp();
 
     std::cout << "Finished..." << std::endl;
     return 0;

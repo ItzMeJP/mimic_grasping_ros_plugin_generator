@@ -82,23 +82,19 @@ bool ObjLocalizationROS::runApp() {
     stopApp();
     initRosNode();
 
-    pipe_to_obj_localization_.reset(
-            popen(plugin_exec_path_.c_str(), "r")); // TODO: find a solution to treat this error!
+    pipe_to_obj_localization_ = popen(plugin_exec_path_.c_str(), "r"); // TODO: find a solution to treat this error!
 
     //spin_thread_.reset(new boost::thread(boost::bind(&ObjLocalizationROS::spinCallback, this)));
 
-    //sleep(10);
-
-    if(pipe_to_obj_localization_.get() == NULL){
+    if(pipe_to_obj_localization_ == NULL){
         output_string_ = "Error in open the executor file for object recognition plugin. ";
         output_string_ += strerror(errno);
         DEBUG_MSG(output_string_);
-        //strerror(errno); //printing errno value
         return false;
     }
 
 
-    int descriptor = fileno(pipe_to_obj_localization_.get());
+    int descriptor = fileno(pipe_to_obj_localization_);
     fcntl(descriptor, F_SETFL, O_NONBLOCK);
 
     obj_localization_thread_reader_.reset(
@@ -142,9 +138,9 @@ bool ObjLocalizationROS::initRosNode() {
 
 
     std::string node_name = ros_namespace_ + "_mimic_grasping_plugin_node";
-    int argc;
-    char **argv;
-    ros::init(argc, argv, node_name);
+    int argc = 0;
+
+    ros::init(argc, nullptr , node_name);
 
     while (!ros::master::check()) {
         std::cerr<<"No roscore found, calling roscore automatically..."<<std::endl;
@@ -163,7 +159,6 @@ bool ObjLocalizationROS::initRosNode() {
 void ObjLocalizationROS::freeMem(){
     obj_localization_thread_reader_.reset();
     spinner_.reset();
-    pipe_to_obj_localization_.reset();
     node_handle_.reset();
     private_node_handle_.reset();
     action_server_.reset();
@@ -177,7 +172,14 @@ bool ObjLocalizationROS::stopApp() {
         obj_localization_thread_reader_->interrupt();
         obj_localization_thread_reader_->join();
         spinner_->stop();
-        //pclose(pipe_to_obj_localization_.get());
+
+        if(pclose(pipe_to_obj_localization_) == -1){
+            std::string s = strerror(errno);
+            output_string_ = "Failed to call phoxi object localization terminator " + s;
+            DEBUG_MSG(output_string_);
+            exit(1);
+        }
+
         DEBUG_MSG("Killing Object Localization Server.");
         //popen(plugin_terminator_path_.c_str(), "r");
         first_obj_localization_communication_ = true;
