@@ -33,6 +33,11 @@ bool ObjLocalizationROS::setTargetName(std::string _name_with_path) {
     return true;
 }
 
+std::string ObjLocalizationROS::getTargetName()
+{
+    return target_name_;
+}
+
 bool ObjLocalizationROS::loadAppConfiguration() {
 
     std::ifstream config_file(plugin_config_path_, std::ifstream::binary);
@@ -50,6 +55,7 @@ bool ObjLocalizationROS::loadAppConfiguration() {
 
     wait_for_server_timeout_in_seconds_ = config_data_["wait_for_server_timeout_in_seconds"].asInt();
     wait_for_result_timeout_in_seconds_ = config_data_["wait_for_result_timeout_in_seconds"].asInt();
+    target_name_ = config_data_["target"].asString();
     ros_namespace_ = config_data_["ros_namespace"].asString();
     action_name_ = config_data_["action_name"].asString();
 
@@ -175,7 +181,7 @@ bool ObjLocalizationROS::stopApp() {
 
         if(pclose(pipe_to_obj_localization_) == -1){
             std::string s = strerror(errno);
-            output_string_ = "Failed to call phoxi object localization terminator " + s;
+            output_string_ = "Failed to call object localization terminator " + s;
             DEBUG_MSG(output_string_);
             exit(1);
         }

@@ -32,6 +32,12 @@ bool PhoxiCamObjLocalizationROS::setTargetName(std::string _name_with_path) {
     target_name_ = _name_with_path;
     return true;
 }
+
+std::string PhoxiCamObjLocalizationROS::getTargetName()
+{
+    return target_name_;
+}
+
 bool PhoxiCamObjLocalizationROS::loadAppConfiguration() {
 
     std::ifstream config_file(plugin_config_path_, std::ifstream::binary);
@@ -49,6 +55,7 @@ bool PhoxiCamObjLocalizationROS::loadAppConfiguration() {
 
     wait_for_recognition_server_timeout_in_seconds_ = config_data_["recognition_server"]["wait_for_server_timeout_in_seconds"].asInt();
     wait_for_recognition_result_timeout_in_seconds_ = config_data_["recognition_server"]["wait_for_result_timeout_in_seconds"].asInt();
+    target_name_ = config_data_["recognition_server"]["target"].asString();
     wait_for_camera_server_timeout_in_seconds_ = config_data_["camera_server"]["wait_for_server_timeout_in_seconds"].asInt();
     wait_for_camera_result_server_timeout_in_seconds = config_data_["camera_server"]["wait_for_result_timeout_in_seconds"].asInt();
 
