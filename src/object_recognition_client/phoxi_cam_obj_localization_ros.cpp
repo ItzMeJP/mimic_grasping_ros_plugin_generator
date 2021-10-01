@@ -228,7 +228,7 @@ bool PhoxiCamObjLocalizationROS::requestData(Pose &_result) {
     } else {
         output_string_ = "Fail to request camera image " + camera_action_server_->getState().toString();
         DEBUG_MSG( output_string_ );
-        status_ = FEEDBACK::ERROR;
+        status_ = FEEDBACK::ABORTED;
         return false;
     }
 
@@ -248,7 +248,7 @@ bool PhoxiCamObjLocalizationROS::requestData(Pose &_result) {
     } else {
         output_string_ = "Fail to request data " + recognition_action_server_->getState().toString();
         DEBUG_MSG( output_string_ );
-        status_ = FEEDBACK::ERROR;
+        status_ = FEEDBACK::ABORTED;
         return false;
     }
 
