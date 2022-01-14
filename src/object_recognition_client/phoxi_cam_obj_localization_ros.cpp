@@ -5,7 +5,6 @@
 #include "object_recognition_client/phoxi_cam_obj_localization_ros.h"
 
 PhoxiCamObjLocalizationROS::PhoxiCamObjLocalizationROS() {
-
 }
 
 PhoxiCamObjLocalizationROS::~PhoxiCamObjLocalizationROS() {
@@ -108,11 +107,15 @@ bool PhoxiCamObjLocalizationROS::runApp() {
     obj_localization_thread_reader_.reset(
             new boost::thread(boost::bind(&PhoxiCamObjLocalizationROS::execCallback, this, descriptor)));
 
-    recognition_action_server_ = std::make_shared<actionlib::SimpleActionClient<object_recognition_skill_msgs::ObjectRecognitionSkillAction>>(
-            recognition_action_name_, true);
+    //recognition_action_server_ = std::make_shared<actionlib::SimpleActionClient<object_recognition_skill_msgs::ObjectRecognitionSkillAction>>(
+    //        recognition_action_name_, true);
 
-    camera_action_server_ = std::make_shared<actionlib::SimpleActionClient<photoneo_skill_msgs::PhotoneoSkillAction>>(
-            camera_action_name_, true);
+    recognition_action_server_.reset(new actionlib::SimpleActionClient<object_recognition_skill_msgs::ObjectRecognitionSkillAction>(recognition_action_name_, true));
+
+    //camera_action_server_ = std::make_shared<actionlib::SimpleActionClient<photoneo_skill_msgs::PhotoneoSkillAction>>(
+    //        camera_action_name_, true);
+
+    camera_action_server_.reset(new actionlib::SimpleActionClient<photoneo_skill_msgs::PhotoneoSkillAction>(camera_action_name_, true));
 
     first_obj_localization_communication_ = false;
 
@@ -126,7 +129,7 @@ bool PhoxiCamObjLocalizationROS::runApp() {
             output_string_ = "The Camera Ros Action was not properly initialized";
             ROS_ERROR_STREAM(output_string_);
             status_ = FEEDBACK::ERROR;
-            stopApp();
+            //stopApp();
             return false;
         }
 
@@ -134,11 +137,11 @@ bool PhoxiCamObjLocalizationROS::runApp() {
             output_string_ = "The Object Recognition Ros Action was not properly initialized";
             ROS_ERROR_STREAM(output_string_);
             status_ = FEEDBACK::ERROR;
-            stopApp();
+            //stopApp();
             return false;
         }
     } else
-        stopApp();
+        return false;//stopApp();
 
     return true;
 }
@@ -188,7 +191,6 @@ bool PhoxiCamObjLocalizationROS::stopApp() {
         }
 
         DEBUG_MSG("Killing Phoxi Object Localization Server.");
-
         //popen(plugin_terminator_path_.c_str(), "r");
         first_obj_localization_communication_ = true;
         freeMem();

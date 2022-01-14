@@ -99,7 +99,6 @@ bool ObjLocalizationROS::runApp() {
         return false;
     }
 
-
     int descriptor = fileno(pipe_to_obj_localization_);
     fcntl(descriptor, F_SETFL, O_NONBLOCK);
 
@@ -145,7 +144,6 @@ bool ObjLocalizationROS::initRosNode() {
 
     std::string node_name = ros_namespace_ + "_mimic_grasping_plugin_node";
     int argc = 0;
-
     ros::init(argc, nullptr , node_name);
 
     while (!ros::master::check()) {
@@ -202,7 +200,6 @@ bool ObjLocalizationROS::stopApp() {
     }
 
 }
-
 
 bool ObjLocalizationROS::requestData(Pose &_result) {
 
